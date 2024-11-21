@@ -1,24 +1,25 @@
 pipeline {
     agent any
     stages {
-        stage('Deploy') {
+        stage('Clone Repository') {
             steps {
-               echo "Test successful"
-              bat "mvn compile"
+                git url: 'https://github.com/JalarapuVaishnavi/Devops_Project.git'
             }
         }
-        stage('Build') {
+        stage('Compile Java') {
             steps {
-               echo "build successful"
-              bat "mvn clean"
+                bat '''
+                cd src
+                javac student/StudentGradeManagementSystem.java
+                '''
             }
         }
-        stage('Test') {
+        stage('Run Application') {
             steps {
-                echo "Test successful"
-              bat "mvn test"
+                bat '''
+                java student.StudentGradeManagementSystem
+                '''
             }
         }
-        
     }
 }
