@@ -2,12 +2,12 @@ pipeline {
     agent any
 
     tools {
-        // Configure the tools like Git, Maven, etc.
-        git 'git'
+        // Define the Git tool if it's installed on the Jenkins server
+        git 'Default'  // Use 'Default' or specify the correct Git installation name
     }
 
     environment {
-        // Define any environment variables here
+        // If you need environment variables, define them here
         // Example: MY_VAR = 'value'
     }
 
@@ -23,7 +23,7 @@ pipeline {
             steps {
                 // Run build commands, e.g., using Maven, Gradle, etc.
                 echo 'Building project...'
-                sh './build.sh' // Replace with your actual build command
+                sh './build.sh'  // Replace with your actual build command
             }
         }
 
@@ -31,7 +31,7 @@ pipeline {
             steps {
                 // Run unit tests or other tests
                 echo 'Running tests...'
-                sh './run_tests.sh' // Replace with your test script
+                sh './run_tests.sh'  // Replace with your test script
             }
         }
 
@@ -39,7 +39,7 @@ pipeline {
             steps {
                 // Deploy or deliver the project
                 echo 'Deploying application...'
-                sh './deploy.sh' // Replace with your deployment script
+                sh './deploy.sh'  // Replace with your deployment script
             }
         }
 
@@ -47,7 +47,7 @@ pipeline {
             steps {
                 // Clean up temporary files if necessary
                 echo 'Cleaning up...'
-                sh 'rm -rf build/' // Example cleanup command
+                sh 'rm -rf build/'  // Example cleanup command
             }
         }
     }
