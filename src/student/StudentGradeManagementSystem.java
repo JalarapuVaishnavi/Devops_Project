@@ -1,22 +1,21 @@
-package student;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.ArrayList;
 
-// Student class to store student details
-
-// Main class for the Student Grade Management System
 public class StudentGradeManagementSystem extends JFrame {
     private ArrayList<Student> students = new ArrayList<>();
-
-    // UI Components
     private JTextField idField, nameField, gradeField, updateIdField, updateGradeField;
 
     public StudentGradeManagementSystem() {
-        // Set up the frame
+        // Check if the environment is headless
+        if (GraphicsEnvironment.isHeadless()) {
+            System.out.println("Running in headless mode. GUI will not be created.");
+            return;  // Exit the constructor if headless
+        }
+
+        // Set up the frame only if not in headless mode
         setTitle("Student Grade Management System");
         setSize(600, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -186,6 +185,9 @@ public class StudentGradeManagementSystem extends JFrame {
     // Main method
     public static void main(String[] args) {
         StudentGradeManagementSystem app = new StudentGradeManagementSystem();
-        app.setVisible(true);
+        // Only show the GUI if it's not in headless mode
+        if (!GraphicsEnvironment.isHeadless()) {
+            app.setVisible(true);
+        }
     }
 }
