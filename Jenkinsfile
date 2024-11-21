@@ -38,11 +38,11 @@ pipeline {
         stage('Run Application') {
             steps {
                 script {
-                    // Run the application from the src directory
+                    // Run the application from the src directory with headless mode enabled
                     echo "Running the Java application..."
                     bat """
                     cd ${SRC_DIR}
-                    java -cp . student.StudentGradeManagementSystem
+                    java -Djava.awt.headless=true -cp . student.StudentGradeManagementSystem
                     """
                 }
             }
@@ -55,7 +55,7 @@ pipeline {
                     echo "Triggering save function..."
                     bat """
                     cd ${SRC_DIR}
-                    java -cp . student.StudentGradeManagementSystem
+                    java -Djava.awt.headless=true -cp . student.StudentGradeManagementSystem
                     """
                 }
             }
