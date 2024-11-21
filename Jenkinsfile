@@ -1,69 +1,88 @@
 pipeline {
     agent any
 
-    tools {
-        // Define the Git tool if it's installed on the Jenkins server
-        git 'Default'  // Use 'Default' or specify the correct Git installation name
-    }
-
     environment {
-        // If you need environment variables, define them here
-        // Example: MY_VAR = 'value'
+        // Set the workspace directory for the project (adjust if needed)
+        SRC_DIR = 'src'
     }
 
     stages {
-        stage('Checkout SCM') {
+        stage('Checkout') {
             steps {
-                // Checkout the latest code from Git
+                // Checkout the code from your repository
                 checkout scm
             }
         }
 
-        stage('Build') {
+        stage('List Workspace Contents') {
             steps {
-                // Run build commands, e.g., using Maven, Gradle, etc.
-                echo 'Building project...'
-                sh './build.sh'  // Replace with your actual build command
+                // List all files to check the directory structure
+                bat 'dir /s /b'
             }
         }
 
-        stage('Test') {
+        stage('Compile Java') {
             steps {
-                // Run unit tests or other tests
-                echo 'Running tests...'
-                sh './run_tests.sh'  // Replace with your test script
+                script {
+                    // Compile the Java code from the correct src directory
+                    echo "Compiling Java code..."
+                    bat """
+                    cd ${SRC_DIR}
+                    javac student/StudentGradeManagementSystem.java
+                    if %errorlevel% neq 0 exit /b %errorlevel%
+                    """
+                }
             }
         }
 
-        stage('Deploy') {
+        stage('Run Application') {
             steps {
-                // Deploy or deliver the project
-                echo 'Deploying application...'
-                sh './deploy.sh'  // Replace with your deployment script
+                script {
+                    // Run the application from the src directory
+                    echo "Running the Java application..."
+                    bat """
+                    cd ${SRC_DIR}
+                    java -cp . student.StudentGradeManagementSystem
+                    """
+                }
             }
         }
 
-        stage('Cleanup') {
+        stage('Save Students') {
             steps {
-                // Clean up temporary files if necessary
-                echo 'Cleaning up...'
-                sh 'rm -rf build/'  // Example cleanup command
+                script {
+                    // If saving functionality is implemented, trigger that part
+                    echo "Triggering save function..."
+                    bat """
+                    cd ${SRC_DIR}
+                    java -cp . student.StudentGradeManagementSystem
+                    """
+                }
+            }
+        }
+
+        stage('Post-Build') {
+            steps {
+                // Clean up or other post-build actions if needed
+                echo "Build completed successfully."
             }
         }
     }
-
+    
     post {
         always {
-            // Always run this block after pipeline completion
-            echo 'Pipeline finished.'
+            // Actions that always happen after the pipeline, regardless of success or failure
+            echo 'Pipeline execution finished!'
         }
+
         success {
-            // Actions to take on successful completion
-            echo 'Build and tests were successful.'
+            // Actions to run only if the build is successful
+            echo 'Build succeeded!'
         }
+
         failure {
-            // Actions to take if the pipeline fails
-            echo 'Build or tests failed.'
+            // Actions to run only if the build fails
+            echo 'Build failed!'
         }
     }
 }
