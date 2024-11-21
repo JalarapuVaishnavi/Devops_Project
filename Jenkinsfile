@@ -1,88 +1,69 @@
 pipeline {
     agent any
 
+    tools {
+        // Configure the tools like Git, Maven, etc.
+        git 'git'
+    }
+
     environment {
-        // Set the workspace directory for the project (adjust if needed)
-        SRC_DIR = 'src'
+        // Define any environment variables here
+        // Example: MY_VAR = 'value'
     }
 
     stages {
-        stage('Checkout') {
+        stage('Checkout SCM') {
             steps {
-                // Checkout the code from your repository
+                // Checkout the latest code from Git
                 checkout scm
             }
         }
 
-        stage('List Workspace Contents') {
+        stage('Build') {
             steps {
-                // List all files to check the directory structure
-                bat 'dir /s /b'
+                // Run build commands, e.g., using Maven, Gradle, etc.
+                echo 'Building project...'
+                sh './build.sh' // Replace with your actual build command
             }
         }
 
-        stage('Compile Java') {
+        stage('Test') {
             steps {
-                script {
-                    // Compile the Java code from the correct src directory
-                    echo "Compiling Java code..."
-                    bat """
-                    cd ${SRC_DIR}
-                    javac student/StudentGradeManagementSystem.java
-                    if %errorlevel% neq 0 exit /b %errorlevel%
-                    """
-                }
+                // Run unit tests or other tests
+                echo 'Running tests...'
+                sh './run_tests.sh' // Replace with your test script
             }
         }
 
-        stage('Run Application') {
+        stage('Deploy') {
             steps {
-                script {
-                    // Run the application from the src directory
-                    echo "Running the Java application..."
-                    bat """
-                    cd ${SRC_DIR}
-                    java -cp . student.StudentGradeManagementSystem
-                    """
-                }
+                // Deploy or deliver the project
+                echo 'Deploying application...'
+                sh './deploy.sh' // Replace with your deployment script
             }
         }
 
-        stage('Save Students') {
+        stage('Cleanup') {
             steps {
-                script {
-                    // If saving functionality is implemented, trigger that part
-                    echo "Triggering save function..."
-                    bat """
-                    cd ${SRC_DIR}
-                    java -cp . student.StudentGradeManagementSystem
-                    """
-                }
-            }
-        }
-
-        stage('Post-Build') {
-            steps {
-                // Clean up or other post-build actions if needed
-                echo "Build completed successfully."
+                // Clean up temporary files if necessary
+                echo 'Cleaning up...'
+                sh 'rm -rf build/' // Example cleanup command
             }
         }
     }
-    
+
     post {
         always {
-            // Actions that always happen after the pipeline, regardless of success or failure
-            echo 'Pipeline execution finished!'
+            // Always run this block after pipeline completion
+            echo 'Pipeline finished.'
         }
-
         success {
-            // Actions to run only if the build is successful
-            echo 'Build succeeded!'
+            // Actions to take on successful completion
+            echo 'Build and tests were successful.'
         }
-
         failure {
-            // Actions to run only if the build fails
-            echo 'Build failed!'
+            // Actions to take if the pipeline fails
+            echo 'Build or tests failed.'
         }
     }
 }
