@@ -1,88 +1,29 @@
 pipeline {
     agent any
 
-    environment {
-        // Set the workspace directory for the project (adjust if needed)
-        SRC_DIR = 'src'
-    }
-
     stages {
-        stage('Checkout') {
+        stage('Build stage') {
             steps {
-                // Checkout the code from your repository
-                checkout scm
+                echo 'Building project…'
+                // Execute Maven clean and package command
+                //sh 'mvn clean package'
+            } 
+        }
+
+        stage('Test stage') {
+            steps {
+                echo 'Testing project…'
+                // Execute Maven test command
+               // sh 'mvn test'
             }
         }
 
-        stage('List Workspace Contents') {
+        stage('Deploy stage') {
             steps {
-                // List all files to check the directory structure
-                bat 'dir /s /b'
+                echo 'Deploying project…'
+                // Execute deployment script
+                //sh './deploy.sh'
             }
-        }
-
-        stage('Compile Java') {
-            steps {
-                script {
-                    // Compile the Java code from the correct src directory
-                    echo "Compiling Java code..."
-                    bat """
-                    cd ${SRC_DIR}
-                    javac student/StudentGradeManagementSystem.java
-                    if %errorlevel% neq 0 exit /b %errorlevel%
-                    """
-                }
-            }
-        }
-
-        stage('Run Application') {
-            steps {
-                script {
-                    // Run the application from the src directory with headless mode enabled
-                    echo "Running the Java application..."
-                    bat """
-                    cd ${SRC_DIR}
-                    java -Djava.awt.headless=true -cp . student.StudentGradeManagementSystem
-                    """
-                }
-            }
-        }
-
-        stage('Save Students') {
-            steps {
-                script {
-                    // If saving functionality is implemented, trigger that part
-                    echo "Triggering save function..."
-                    bat """
-                    cd ${SRC_DIR}
-                    java -Djava.awt.headless=true -cp . student.StudentGradeManagementSystem
-                    """
-                }
-            }
-        }
-
-        stage('Post-Build') {
-            steps {
-                // Clean up or other post-build actions if needed
-                echo "Build completed successfully."
-            }
-        }
-    }
-    
-    post {
-        always {
-            // Actions that always happen after the pipeline, regardless of success or failure
-            echo 'Pipeline execution finished!'
-        }
-
-        success {
-            // Actions to run only if the build is successful
-            echo 'Build succeeded!'
-        }
-
-        failure {
-            // Actions to run only if the build fails
-            echo 'Build failed!'
-        }
-    }
+        }
+    }
 }
